@@ -70,14 +70,14 @@ int main(int argc, char **argv)
 	else return 0;
 
 	int *arr = new int[N];
-	int base = atoi(argv[3]);
+	int base = atoi(argv[4]);
 	for (int i = 0; i < N; i++)
 	{
 		arr[i] = rand();
 		if(base != 0)
 			arr[i] %= base;
 	}
-	if(0 == strcmp(argv[4], "sorted"))
+	if(0 == strcmp(argv[5], "sorted"))
 		heapSort(arr, 0, N-1);	
 	
 	clock_t cl = clock();
@@ -85,9 +85,9 @@ int main(int argc, char **argv)
 	double time; 
 	
 	int iterations = atoi(argv[2]);
-
-	ofstream outFile(argv[5]);	
-	for(int n = 100; n < N; n += 1000)
+	int offset = atoi(argv[3]);
+	ofstream outFile(argv[6]);	
+	for(int n = 100; n < N; n += offset)
 	{
 		string times(to_string(n));
 		cout << "Get time of sorting " << n << " elements array" << endl;	
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 // 		cout << endl;
 		outFile << times << endl;
 	}
-	cout << "Data for using in graphic can be found at " << argv[5] << endl;
+	cout << "Data for using in graphic can be found at " << argv[6] << endl;
 
 	outFile.close();
 	delete[] arr;

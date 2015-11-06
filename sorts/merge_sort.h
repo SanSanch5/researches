@@ -53,8 +53,8 @@ void merge_insertion(T *arr, int p, int r)
 {
 	if(r-p <= 0) 
 	{
-	 	if(r-p <= 63)
-	 		binarySearchBlockedCopyInsertion<T>(arr, p, r);
+// 	 	if(r-p <= 63)
+// 	 		binarySearchBlockedCopyInsertion<T>(arr, p, r);
 		return;
 	}
 
