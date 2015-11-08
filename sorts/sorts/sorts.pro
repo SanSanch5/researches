@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-# QT       += core
+#QT       += core
 
 QT       -= gui
 
@@ -18,7 +18,8 @@ TEMPLATE = app
 
 
 SOURCES += \
-    sorts.cpp
+    sorts.cpp \
+    resultsanalyser.cpp
 
 HEADERS += \
     heap.h \

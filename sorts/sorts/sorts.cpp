@@ -77,10 +77,37 @@ int main(int argc, char **argv)
 
 	if(argc == 2 && 0 == strcmp(argv[1], "ar"))
 	{
-		auto results = analyse();
+        auto results = findInsertionEqualN();
 		printAnalyseResults(results);
 		return 0;
 	}
+
+    else if(argc == 3 && strcmp(argv[1], "-n") == 0)
+    {
+        ofstream outFile(argv[2]);
+        int N = 50000;
+        int *arr = new int[N];
+        int *tmp = new int[N];
+        for (int i = 0; i < N; i++)
+            arr[i] = rand() % 1000;
+        for(int i = 30; i < 50000; i += 1000)
+        {
+            cout << "Get time with " << i << " = low level" << endl;
+            string time(to_string(i));
+            clock_t cl = clock();
+
+            cl = clock();
+            for(int i = 0; i < 1000; ++i)
+            {
+                copy(arr, arr+N, tmp);
+                merge_insertion_N_var<int>(tmp, 0, N-1, i);
+            }
+            time.append(" " + to_string((double)(clock() - cl) / CLOCKS_PER_SEC / 1000));
+            outFile << time << endl;
+        }
+
+        return 0;
+    }
 
 	int N = 1000000;
 	if(argc >= 6)

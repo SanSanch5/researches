@@ -40,8 +40,8 @@ void randPartition(T *arr, int p, int r, int &q)
 template<typename T>
 void quickSort(T *arr, int p, int r)
 {
-// 	if(r-p <= 63)
-// 		binarySearchBlockedCopyInsertion<T>(arr, p, r);
+    if(r-p <= 2180)
+        binarySearchBlockedCopyInsertion<T>(arr, p, r);
 
 	int q;
 	while(p < r)
@@ -105,8 +105,8 @@ void randPartitionSmart(T *arr, int p, int r, int &q, int &t)
 template<typename T>
 void smartPartitionQuickSort(T *arr, int p, int r)
 {
-// 	if(r-p <= 63)
-// 		binarySearchBlockedCopyInsertion<T>(arr, p, r);
+    if(r-p <= 1350)
+        binarySearchBlockedCopyInsertion<T>(arr, p, r);
 
 	int q, t;
 	while(p < r)
@@ -131,8 +131,8 @@ void middleRandPartition(T *arr, int p, int r, int &q)
 template<typename T>
 void middleRandQuickSort(T *arr, int p, int r)
 {
-// 	if(r-p <= 63)
-// 		binarySearchBlockedCopyInsertion<T>(arr, p, r);
+    if(r-p <= 2180)
+        binarySearchBlockedCopyInsertion<T>(arr, p, r);
 
 	int q;
 	while(p < r)

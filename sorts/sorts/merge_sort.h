@@ -53,8 +53,8 @@ void merge_insertion(T *arr, int p, int r)
 {
 	if(r-p <= 0) 
 	{
-// 	 	if(r-p <= 63)
-// 	 		binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        if(r-p <= 840)
+            binarySearchBlockedCopyInsertion<T>(arr, p, r);
 		return;
 	}
 
@@ -62,6 +62,22 @@ void merge_insertion(T *arr, int p, int r)
 	merge_insertion(arr, p, mid);
 	merge_insertion(arr, mid+1, r);
 	merge(arr, p, mid, r);	
+}
+
+template<typename T>
+void merge_insertion_N_var(T *arr, int p, int r, int N = 0)
+{
+    if(r-p <= 0)
+    {
+        if(r-p <= N)
+            binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        return;
+    }
+
+    int mid = (p+r)/2;
+    merge_insertion(arr, p, mid);
+    merge_insertion(arr, mid+1, r);
+    merge(arr, p, mid, r);
 }
 
 #endif
