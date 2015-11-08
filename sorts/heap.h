@@ -1,5 +1,5 @@
-#ifndef HEAP
-#define HEAP
+#ifndef HEAP_H 
+#define HEAP_H
 
 #define LEFT(i) ((i+1) << 1) - 1
 #define PARENT(i) ((i+1) >> 1) - 1

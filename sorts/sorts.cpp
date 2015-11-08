@@ -1,14 +1,15 @@
-#include "insertion_sorts.h"
-#include "quick_sorts.h"
-#include "heap_sort.h"
-#include "merge_sort.h"
-
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <memory>
 #include <time.h>
 #include <cstring>
+
+#include "insertion_sorts.h"
+#include "quick_sorts.h"
+#include "heap_sort.h"
+#include "merge_sort.h"
+#include "resultsanalyser.h"
 
 using namespace::std;
 
@@ -61,9 +62,26 @@ void testSortings()
 	cout << endl;
 }
 
+void printAnalyseResults(vector<int> vec)
+{
+	cout << "Max N insertion better than merge = " << vec[MERGE] << endl;
+	cout << "Max N insertion better than heap = " << vec[HEAP] << endl;
+	cout << "Max N insertion better than random quick = " << vec[QUICK] << endl;
+	cout << "Max N insertion better than median quick = " << vec[MEDIAN_QUICK] << endl;
+	cout << "Max N insertion better than smart quick = " << vec[SMART_QUICK] << endl;
+}
+
 int main(int argc, char **argv)
 {
 	testSortings<int>();
+
+	if(argc == 2 && 0 == strcmp(argv[1], "ar"))
+	{
+		auto results = analyse();
+		printAnalyseResults(results);
+		return 0;
+	}
+
 	int N = 1000000;
 	if(argc >= 6)
 		N = atoi(argv[1]);
