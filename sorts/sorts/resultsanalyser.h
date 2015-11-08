@@ -64,9 +64,9 @@ std::vector<int> analyse()
 {
 	std::vector<int> res;
 
-	std::vector<int> nums = analyseFile("sortsdata/ins3q_heap");
-	std::vector<int> nums2 = analyseFile("sortsdata/minimum_equals");
-	std::vector<int> nums3 = analyseFile("sortsdata/much_equals");
+    std::vector<int> nums = analyseFile("../sortsdata/ins3q_heap");
+    std::vector<int> nums2 = analyseFile("../sortsdata/minimum_equals");
+    std::vector<int> nums3 = analyseFile("../sortsdata/much_equals");
 	for(int i = 0; i < 5; ++i)
 		res.push_back([&]() -> int 
 				{
