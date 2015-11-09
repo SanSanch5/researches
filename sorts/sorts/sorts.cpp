@@ -71,6 +71,19 @@ void printAnalyseResults(vector<int> vec)
 	cout << "Max N insertion better than smart quick = " << vec[SMART_QUICK] << endl;
 }
 
+double getTimeOfSort(int *arr, int n, Sort sort, int iterations)
+{
+    clock_t cl = clock();
+    int *tmp = new int[n];
+    for(int i = 0; i < iterations; ++i)
+    {
+        copy(arr, arr+n, tmp);
+        sort(tmp, 0, n-1);
+    }
+    delete[] tmp;
+    return (double)(clock() - cl) / CLOCKS_PER_SEC / iterations;
+}
+
 int main(int argc, char **argv)
 {
 	testSortings<int>();
@@ -90,19 +103,21 @@ int main(int argc, char **argv)
         int *tmp = new int[N];
         for (int i = 0; i < N; i++)
             arr[i] = rand() % 1000;
-        for(int i = 30; i < 50000; i += 1000)
+        for(int i = 30; i < 3000; i += 30)
         {
             cout << "Get time with " << i << " = low level" << endl;
             string time(to_string(i));
             clock_t cl = clock();
 
             cl = clock();
-            for(int i = 0; i < 1000; ++i)
+            for(int i = 0; i < 100000; ++i)
             {
                 copy(arr, arr+N, tmp);
                 merge_insertion_N_var<int>(tmp, 0, N-1, i);
             }
-            time.append(" " + to_string((double)(clock() - cl) / CLOCKS_PER_SEC / 1000));
+            double t{(double)(clock() - cl) / CLOCKS_PER_SEC / 100000};
+            time.append(" " + to_string(t));
+            cout << "\ttime = " << t << endl;
             outFile << time << endl;
         }
 
@@ -125,8 +140,6 @@ int main(int argc, char **argv)
 	if(0 == strcmp(argv[5], "sorted"))
 		heapSort(arr, 0, N-1);	
 	
-	clock_t cl = clock();
-	int *tmp = new int[N];
 	double time; 
 	
 	int iterations = atoi(argv[2]);
@@ -136,70 +149,28 @@ int main(int argc, char **argv)
 	{
 		string times(to_string(n));
 		cout << "Get time of sorting " << n << " elements array" << endl;	
-		cl = clock();
-		for(int i = 0; i < iterations; ++i)
-		{
-			copy(arr, arr+n, tmp);
-			binarySearchBlockedCopyInsertion<int>(tmp, 0, n-1);
-		}
-		time = (double)(clock() - cl) / CLOCKS_PER_SEC / iterations;
+        time = getTimeOfSort(arr, n, binarySearchBlockedCopyInsertion<int>, iterations);
 		times.append(" " + to_string(time));
-// 		cout << "Binary search block moving insertion elapsed time " << time << endl;
 
-		cl = clock();
-		for(int i = 0; i < iterations; ++i)
-		{
-			copy(arr, arr+n, tmp);
-			merge_insertion<int>(tmp, 0, n-1);
-		}
-		time = (double)(clock() - cl) / CLOCKS_PER_SEC / iterations;
+        time = getTimeOfSort(arr, n, merge_insertion<int>, iterations);
 		times.append(" " + to_string(time));
 		 
-		cl = clock();
-		for(int i = 0; i < iterations; ++i)
-		{
-			copy(arr, arr+n, tmp);
-			heapSort(tmp, 0, n-1);
-		}
-		time = (double)(clock() - cl) / CLOCKS_PER_SEC / iterations;
+        time = getTimeOfSort(arr, n, heapSort<int>, iterations);
 		times.append(" " + to_string(time));
 		 
-		cl = clock();
-		for(int i = 0; i < iterations; ++i)
-		{
-			copy(arr, arr+n, tmp);
-			quickSort(tmp, 0, n-1);
-		}
-		time = (double)(clock() - cl) / CLOCKS_PER_SEC / iterations;
+        time = getTimeOfSort(arr, n, quickSort<int>, iterations);
 		times.append(" " + to_string(time));
-// 		cout << "Randomized optimal recursive (ROR) quick sort elapsed time " << time << endl;
 	 
-		cl = clock();
-		for(int i = 0; i < iterations; ++i)
-		{
-			copy(arr, arr+n, tmp);
-			middleRandQuickSort(tmp, 0, n-1);
-		}
-		time = (double)(clock() - cl) / CLOCKS_PER_SEC / iterations;
+        time = getTimeOfSort(arr, n, middleRandQuickSort<int>, iterations);
 		times.append(" " + to_string(time));
-// 		cout << "Middle random quick sort elapsed time " << time << endl;
 	 
-		cl = clock();
-		for(int i = 0; i < iterations; ++i)
-		{
-			copy(arr, arr+n, tmp);
-			smartPartitionQuickSort(tmp, 0, n-1);
-		}
-		time = (double)(clock() - cl) / CLOCKS_PER_SEC / iterations;
+        time = getTimeOfSort(arr, n, smartPartitionQuickSort<int>, iterations);
 		times.append(" " + to_string(time));
-// 		cout << "Smart partition ROR quick sort elapsed time " << time << endl;
-// 		cout << endl;
 		outFile << times << endl;
 	}
 	cout << "Data for using in graphic can be found at " << argv[6] << endl;
 
 	outFile.close();
 	delete[] arr;
-	delete[] tmp;
 	return 0;
 }
