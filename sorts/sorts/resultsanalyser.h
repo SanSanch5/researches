@@ -13,7 +13,7 @@ enum SortType
 }; 
 
 std::vector<std::string> split(const std::string &s, char delim);
-std::vector<int> analyseFile(std::string fileName);
 std::vector<int> findInsertionEqualN();
+std::vector<int> findInsertionBest();
 
 #endif

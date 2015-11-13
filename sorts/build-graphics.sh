@@ -1,7 +1,7 @@
-gnuplot -e "specialdata='Сортировка случайно заполенного массива с мощностью алфавита 10000'; infilename='sortsdata/ins3q_heap'; outfilename='plots/ins3q_heap.pdf'" graphic.gnu
+gnuplot -e "specialdata='Сортировка случайно заполенного массива с мощностью алфавита 1000'; infilename='sortsdata/ins3q_heap'; outfilename='plots/ins3q_heap.pdf'" graphic.gnu
 gnuplot -e "specialdata='Сортировка отсортированного массива'; infilename='sortsdata/with_sorted_array'; outfilename='plots/with_sorted_array.pdf'" graphic.gnu
 gnuplot -e "specialdata='Сортировка массива с минимальным количеством повторяющихся данных'; infilename='sortsdata/minimum_equals'; outfilename='plots/minimum_equals.pdf'" graphic.gnu
-gnuplot -e "specialdata='Сортировка массива с мощностью алфавита 100'; infilename='sortsdata/much_equals'; outfilename='plots/much_equals.pdf'" graphic.gnu
+gnuplot -e "specialdata='Сортировка массива с мощностью алфавита 50'; infilename='sortsdata/much_equals'; outfilename='plots/much_equals.pdf'" graphic.gnu
 
 xdg-open plots/ins3q_heap.pdf
 xdg-open plots/minimum_equals.pdf

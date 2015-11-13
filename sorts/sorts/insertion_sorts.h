@@ -12,7 +12,7 @@ void simpleInsertionSort(T *arr, int p, int r)
 	{
 		T num = arr[i];
 		int pos = i-1;
-		while(pos >= 0 && arr[pos] > num)
+        while(pos >= p && arr[pos] > num)
 		{
 			arr[pos+1] = arr[pos];
 			--pos;
@@ -22,30 +22,39 @@ void simpleInsertionSort(T *arr, int p, int r)
 }
 
 template<typename T>
+int binarySearchPos(T *arr, int from, int end, const T &cmp)
+{
+    if(cmp >= arr[end]) return end+1;
+
+    int pos = from;
+    if(cmp > arr[from])
+    {
+        int right = end+1;
+        int left = from;
+        pos = (left+right)/2;
+        while(arr[pos] < cmp || arr[pos-1] > cmp)
+        {
+            if(arr[pos] < cmp)
+                left = pos;
+            else
+                right = pos;
+
+            pos = (left + right) / 2;
+        }
+    }
+
+    return pos;
+}
+
+template<typename T>
 void binarySearchBlockedCopyInsertion(T *arr, int p, int r)
 {
 	for(int i = p+1; i <= r; ++i)
 	{
 		T num = arr[i];
-		if(num >= arr[i-1]) continue;
+        if(num >= arr[i-1]) continue;
 
-		int pos = 0;
-		if(num > arr[0]) 
-		{
-			int right = i;
-			int left = 0;
-			pos = right/2;
-			while(arr[pos] < num || arr[pos-1] > num)
-			{
-				if(arr[pos] < num)
-					left = pos;
-				else
-					right = pos;
-
-				pos = (left + right) / 2;
-			}	
-		}	
-
+        int pos = binarySearchPos(arr, p, i-1, num);
 		memmove(arr+pos+1, arr+pos, (i-pos)*sizeof(T));
 		arr[pos] = num;
 	}

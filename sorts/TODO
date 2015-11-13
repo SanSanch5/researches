@@ -2,11 +2,14 @@
 1. Написать прогу, котора пробежится по полученным данным и найдёт для каждой сортировки целое число n - количество элементов массива,
 при котором сортировка вставками работает быстрее заданной. 
 Найдено:
-Max N insertion better than merge = 840
-Max N insertion better than heap = -1
-Max N insertion better than random quick = 2180
-Max N insertion better than median quick = 2180
-Max N insertion better than smart quick = 1350
+File ../sortsdata_without_insertion/ins3q_heap analysing start ... analysing end -> N: 1270 630 760 750 960 
+File ../sortsdata_without_insertion/minimum_equals analysing start ... analysing end -> N: 1200 610 730 730 1080 
+File ../sortsdata_without_insertion/much_equals analysing start ... analysing end -> N: -1 900 1070 1070 580 
+Max N insertion better than merge = 1200
+Max N insertion better than heap = 610
+Max N insertion better than random quick = 730
+Max N insertion better than median quick = 730
+Max N insertion better than smart quick = 580
 
 2. Подставить эти данные в алгоритмы
 3. Построить графики работ усовершенствованных алгоритмов. По возможности, сравнить с тем, что было раньше.
@@ -16,3 +19,24 @@ Max N insertion better than smart quick = 1350
 4. Найти минимальное произведение отношения найденного N и более меньшего со временем работы на этом меньшем уровне.
 Это и даст минимальный уровень, на котором надо разбивать.
 	4.1. Построить график зависимости сортировки (пофиг какой, для всех найдены границы) от изменения N
+
+Всё найдено:
+Insertions best ../sortsdata_without_insertion/ins3q_heap analysing start ... analysing end -> N: 120 120 150 150 120 
+Insertions best ../sortsdata_without_insertion/minimum_equals analysing start ... analysing end -> N: 120 120 150 150 120 
+Insertions best ../sortsdata_without_insertion/much_equals analysing start ... analysing end -> N: 120 310 370 370 300 
+The best N insertion better than merge = 120
+The best N insertion better than heap = 120
+The best N insertion better than random quick = 150
+The best N insertion better than median quick = 150
+The best N insertion better than smart quick = 120
+
+Стало хуже..... Объясню тем, что забыл учесть, что производятся процедуры Partition и Merge, а не чистые сортировки вставкой... 
+Нужно построить графики от изменений N для нижних уровней, и уже на их основе анализировать минимальное время. 
+Случай нужно рассмотреть тот, в котором было найдено минимальное значение N при поисе эквивалентного.
+merge <= minimum_equals
+quick <= minimum_equals
+median quick <= minimum_equals
+smart quick <= much_equals
+
+5. Результаты аномальные.. почему-то даже экввалентные N ухудшают результаты. Хотя теоретически это должно только улучшить, надо думать...
+6. Сравню-ка яо встроенным в Qt qSort()-ом

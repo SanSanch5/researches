@@ -10,10 +10,13 @@
 #include "heap_sort.h"
 #include "merge_sort.h"
 #include "resultsanalyser.h"
+#include "qsort_wrapper.h"
+#include "tim_sort.h"
 
 using namespace::std;
 
 typedef void (*Sort)(int *arr, int p, int r); 
+typedef void (*SortVarN)(int *arr, int p, int r, int N);
 
 bool testSort(Sort f, int *arr, int n)
 {
@@ -24,7 +27,7 @@ bool testSort(Sort f, int *arr, int n)
 	for(int i = 1; (i < n); ++i)
 		if(tmp[i] < tmp[i-1]) 
 			sorted = false;
-	for(int i = 0; i < 10; ++i)
+    for(int i = 0; i < 10; ++i)
 		cout << tmp[i] << " ";
 	delete[] tmp;
 	return sorted;
@@ -33,11 +36,11 @@ bool testSort(Sort f, int *arr, int n)
 template<typename T>
 void testSortings()
 {
-	int n = 300;
-	int arr[300];
+    int n = 100;
+    int arr[100];
 	cout << "\nTesting ..." << endl;
 	for(int i = 0; i < n; ++i)
-		arr[i] = rand() % 1000;
+        arr[i] = rand() % 100;
 
 	bool sorted = testSort(simpleInsertionSort<T>, arr, n);
 	cout << "\t\t...Simple insertion " << (sorted ? "OK" : "FAILED") << endl;	
@@ -48,7 +51,10 @@ void testSortings()
 	sorted = testSort(merge_insertion<T>, arr, n);
 	cout << "\t\t...Merge + insertion sort " << (sorted ? "OK" : "FAILED") << endl;	
 
-	sorted = testSort(heapSort<T>, arr, n);
+    sorted = testSort(merge_insertion_galloped<T>, arr, n);
+    cout << "\t\t...Merge sort galloped mode" << (sorted ? "OK" : "FAILED") << endl;
+
+    sorted = testSort(heapSort<T>, arr, n);
 	cout << "\t\t...Heap sort " << (sorted ? "OK" : "FAILED") << endl;	
 
 	sorted = testSort(quickSort<T>, arr, n);
@@ -59,16 +65,25 @@ void testSortings()
 
 	sorted = testSort(smartPartitionQuickSort<T>, arr, n);
 	cout << "\t\t...Smart partition ROR quick sort " << (sorted ? "OK" : "FAILED") << endl;	
-	cout << endl;
+
+    sorted = testSort(qsort_wrapper<T>, arr, n);
+    cout << "\t\t...Wrapped Qt sort " << (sorted ? "OK" : "FAILED") << endl;
+
+    sorted = testSort(timSort<T>, arr, n);
+    cout << "\t\t...Timsort " << (sorted ? "OK" : "FAILED") << endl;
+
+    sorted = testSort(timSortGalloped<T>, arr, n);
+    cout << "\t\t...Galloped Timsort " << (sorted ? "OK" : "FAILED") << endl;
+    cout << endl;
 }
 
-void printAnalyseResults(vector<int> vec)
+void printAnalyseResults(vector<int> vec, string start)
 {
-	cout << "Max N insertion better than merge = " << vec[MERGE] << endl;
-	cout << "Max N insertion better than heap = " << vec[HEAP] << endl;
-	cout << "Max N insertion better than random quick = " << vec[QUICK] << endl;
-	cout << "Max N insertion better than median quick = " << vec[MEDIAN_QUICK] << endl;
-	cout << "Max N insertion better than smart quick = " << vec[SMART_QUICK] << endl;
+    cout << start << " N insertion better than merge = " << vec[MERGE] << endl;
+    cout << start << " N insertion better than heap = " << vec[HEAP] << endl;
+    cout << start << " N insertion better than random quick = " << vec[QUICK] << endl;
+    cout << start << " N insertion better than median quick = " << vec[MEDIAN_QUICK] << endl;
+    cout << start << " N insertion better than smart quick = " << vec[SMART_QUICK] << endl;
 }
 
 double getTimeOfSort(int *arr, int n, Sort sort, int iterations)
@@ -84,59 +99,115 @@ double getTimeOfSort(int *arr, int n, Sort sort, int iterations)
     return (double)(clock() - cl) / CLOCKS_PER_SEC / iterations;
 }
 
+void fillArray(int *arr, int N, int base)
+{
+    for (int i = 0; i < N; i++)
+    {
+        arr[i] = rand();
+        if(base != 0)
+            arr[i] %= base;
+    }
+}
+
+void getDataN(ofstream &outFile, int *arr, int N, int base,
+              SortVarN sort, int limit, int iterations)
+{
+    fillArray(arr, N, base);
+    int *tmp = new int[N];
+    for(int i = 0; i <= limit; ++i)
+    {
+        cout << "Get time with " << i << " = low level" << endl;
+        string time(to_string(i));
+        clock_t cl = clock();
+
+        cl = clock();
+        for(int j = 0; j < iterations; ++j)
+        {
+            copy(arr, arr+N, tmp);
+            sort(tmp, 0, N-1, i);
+        }
+        double t{(double)(clock() - cl) / CLOCKS_PER_SEC / iterations};
+        time.append(" " + to_string(t));
+        cout << "\ttime = " << t << endl;
+        outFile << time << endl;
+    }
+    outFile.close();
+    delete[] tmp;
+}
+
 int main(int argc, char **argv)
 {
-	testSortings<int>();
-
-	if(argc == 2 && 0 == strcmp(argv[1], "ar"))
+    if(argc == 2 && 0 == strcmp(argv[1], "--test"))
+    {
+        testSortings<int>();
+        return 0;
+    }
+    else if(argc == 3 && 0 == strcmp(argv[1], "ar"))
 	{
-        auto results = findInsertionEqualN();
-		printAnalyseResults(results);
-		return 0;
+        if(0 == strcmp(argv[2], "-e"))
+        {
+            auto results = findInsertionEqualN();
+            printAnalyseResults(results, "Max");
+            return 0;
+        }
+        else if(0 == strcmp(argv[2], "-b"))
+        {
+            auto results = findInsertionBest();
+            printAnalyseResults(results, "The best");
+            return 0;
+        }
 	}
 
-    else if(argc == 3 && strcmp(argv[1], "-n") == 0)
+    else if(argc == 6 && strcmp(argv[1], "-n") == 0)
     {
-        ofstream outFile(argv[2]);
-        int N = 50000;
+        int N = atoi(argv[3]);
+        int iterations = atoi(argv[4]);
         int *arr = new int[N];
-        int *tmp = new int[N];
-        for (int i = 0; i < N; i++)
-            arr[i] = rand() % 1000;
-        for(int i = 30; i < 3000; i += 30)
+        if(0 == strcmp(argv[5], "merge"))
         {
-            cout << "Get time with " << i << " = low level" << endl;
-            string time(to_string(i));
-            clock_t cl = clock();
-
-            cl = clock();
-            for(int i = 0; i < 100000; ++i)
-            {
-                copy(arr, arr+N, tmp);
-                merge_insertion_N_var<int>(tmp, 0, N-1, i);
-            }
-            double t{(double)(clock() - cl) / CLOCKS_PER_SEC / 100000};
-            time.append(" " + to_string(t));
-            cout << "\ttime = " << t << endl;
-            outFile << time << endl;
+            ofstream outFileMerge (string(argv[2]) + "merge");
+            getDataN(outFileMerge, arr, N, 0, merge_insertion_N_var<int>, 1200, iterations);
         }
-
+        else if(0 == strcmp(argv[5], "median"))
+        {
+            ofstream outFileMedian(string(argv[2]) + "median");
+            getDataN(outFileMedian, arr, N, 0, middleRandQuickSortVarN<int>, 730, iterations);
+        }
+        else if(0 == strcmp(argv[5], "quick"))
+        {
+            ofstream outFileQuick (string(argv[2]) + "quick");
+            getDataN(outFileQuick, arr, N, 0, quickSortVarN<int>, 730, iterations);
+        }
+        else if(0 == strcmp(argv[5], "smart"))
+        {
+            ofstream outFileSmart (string(argv[2]) + "smart");
+            getDataN(outFileSmart, arr, N, 50, smartPartitionQuickSortVarN<int>, 580, iterations);
+        }
         return 0;
     }
 
 	int N = 1000000;
-	if(argc >= 6)
+    if(argc == 7)
 		N = atoi(argv[1]);
-	else return 0;
+    else
+    {
+        cout << "\nUsage:" << endl;
+        cout << "0. --test - run tests" << endl;
+        cout << "1. <max_array_size> <iterations> <step> <base> <sorted/unsorted> <destfile>" << endl;
+        cout << "\twhen <step> shows array resizing stepfrom 0 to <max_array_size>, " \
+                "<base> is a limit of random generated elements" << endl;
+        cout << "2. ar - analise results\n\t-e - find N when each sort equals to insertion sort" << endl;
+        cout << "\t-b - find what N in general should be used for the best results in each sort" << endl;
+        cout << "\t\tNote, you need to hardcode results from 'ar -e' to func analyseInsertions" << endl;
+        cout << "3. -n <destdir> <array_size> <iterations> <sort>, when <iterations> seems how many times" \
+                " array must have been sorted for the clearest results\n" << endl;
+
+        return 0;
+    }
 
 	int *arr = new int[N];
 	int base = atoi(argv[4]);
-	for (int i = 0; i < N; i++)
-	{
-		arr[i] = rand();
-		if(base != 0)
-			arr[i] %= base;
-	}
+    fillArray(arr, N, base);
 	if(0 == strcmp(argv[5], "sorted"))
 		heapSort(arr, 0, N-1);	
 	
@@ -149,8 +220,11 @@ int main(int argc, char **argv)
 	{
 		string times(to_string(n));
 		cout << "Get time of sorting " << n << " elements array" << endl;	
-        time = getTimeOfSort(arr, n, binarySearchBlockedCopyInsertion<int>, iterations);
-		times.append(" " + to_string(time));
+//        time = getTimeOfSort(arr, n, binarySearchBlockedCopyInsertion<int>, iterations);
+//		times.append(" " + to_string(time));
+
+        time = getTimeOfSort(arr, n, merge_insertion_galloped<int>, iterations);
+        times.append(" " + to_string(time));
 
         time = getTimeOfSort(arr, n, merge_insertion<int>, iterations);
 		times.append(" " + to_string(time));
@@ -166,7 +240,16 @@ int main(int argc, char **argv)
 	 
         time = getTimeOfSort(arr, n, smartPartitionQuickSort<int>, iterations);
 		times.append(" " + to_string(time));
-		outFile << times << endl;
+
+        time = getTimeOfSort(arr, n, qsort_wrapper<int>, iterations);
+        times.append(" " + to_string(time));
+
+        time = getTimeOfSort(arr, n, timSort<int>, iterations);
+        times.append(" " + to_string(time));
+
+        time = getTimeOfSort(arr, n, timSortGalloped<int>, iterations);
+        times.append(" " + to_string(time));
+        outFile << times << endl;
 	}
 	cout << "Data for using in graphic can be found at " << argv[6] << endl;
 

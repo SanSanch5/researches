@@ -27,4 +27,6 @@ HEADERS += \
     insertion_sorts.h \
     merge_sort.h \
     quick_sorts.h \
-    resultsanalyser.h
+    resultsanalyser.h \
+    qsort_wrapper.h \
+    tim_sort.h
