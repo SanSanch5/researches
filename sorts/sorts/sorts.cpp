@@ -99,8 +99,9 @@ double getTimeOfSort(int *arr, int n, Sort sort, int iterations)
     return (double)(clock() - cl) / CLOCKS_PER_SEC / iterations;
 }
 
-void fillArray(int *arr, int N, int base)
+void fillArray(int *arr, int N, int percent)
 {
+    int base = N * percent / 100;
     for (int i = 0; i < N; i++)
     {
         arr[i] = rand();
@@ -195,7 +196,7 @@ int main(int argc, char **argv)
         cout << "0. --test - run tests" << endl;
         cout << "1. <max_array_size> <iterations> <step> <base> <sorted/unsorted> <destfile>" << endl;
         cout << "\twhen <step> shows array resizing stepfrom 0 to <max_array_size>, " \
-                "<base> is a limit of random generated elements" << endl;
+                "<base> is a sparsity percent of random generated elements; base = 0 - max sparsity" << endl;
         cout << "2. ar - analise results\n\t-e - find N when each sort equals to insertion sort" << endl;
         cout << "\t-b - find what N in general should be used for the best results in each sort" << endl;
         cout << "\t\tNote, you need to hardcode results from 'ar -e' to func analyseInsertions" << endl;

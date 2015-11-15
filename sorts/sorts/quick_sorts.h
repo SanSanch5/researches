@@ -41,7 +41,10 @@ template<typename T>
 void quickSortVarN(T *arr, int p, int r, int N = 0)
 {
     if(r-p <= N)
+    {
         binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        return;
+    }
 
     int q;
     while(p < r)
@@ -56,7 +59,10 @@ template<typename T>
 void quickSort(T *arr, int p, int r)
 {
     if(r-p <= 730)
+    {
         binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        return;
+    }
 
 	int q;
 	while(p < r)
@@ -121,7 +127,10 @@ template<typename T>
 void smartPartitionQuickSortVarN(T *arr, int p, int r, int N = 0)
 {
     if(r-p <= N)
+    {
         binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        return;
+    }
 
     int q, t;
     while(p < r)
@@ -136,7 +145,10 @@ template<typename T>
 void smartPartitionQuickSort(T *arr, int p, int r)
 {
     if(r-p <= 580)
+    {
         binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        return;
+    }
 
 	int q, t;
 	while(p < r)
@@ -162,7 +174,10 @@ template<typename T>
 void middleRandQuickSortVarN(T *arr, int p, int r, int N = 0)
 {
     if(r-p <= N)
+    {
         binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        return;
+    }
 
     int q;
     while(p < r)
@@ -177,7 +192,10 @@ template<typename T>
 void middleRandQuickSort(T *arr, int p, int r)
 {
     if(r-p <= 730)
+    {
         binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        return;
+    }
 
 	int q;
 	while(p < r)

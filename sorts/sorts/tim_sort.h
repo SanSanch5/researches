@@ -76,18 +76,18 @@ void stackStep(T *arr, std::stack<MinArr> &st)
         {
             merge(arr, y.start, y.start + y.n - 1, z.start + z.n-1);
             y.n += z.n;
-            st.push(x);
-            st.push(y);
+            st.push(x), st.push(y);
         }
         else
         {
             merge(arr, x.start, x.start + x.n - 1, y.start + y.n-1);
             x.n += y.n;
-            st.push(x);
-            st.push(z);
+            st.push(x), st.push(z);
         }
         stackStep(arr, st);
     }
+    else
+        st.push(x), st.push(y), st.push(z);
 }
 
 

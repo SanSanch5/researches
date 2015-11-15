@@ -77,13 +77,11 @@ struct InsTime
 void analyseInsertion(const std::vector<InsTime> &data, int &n)
 {
     int k = 0;
-    while(data[k].n < n) ++k;
-    data[k].n == n || --k;
     double min = data[k].time;
     if(n != -1) n = data[k].n;
-    for(int i = k-1; i >= 0; --i)
+    for(int i = 0; i < data.size(); ++i)
     {
-        double t = data[k].n/data[i].n * data[i].time;
+        double t = data[i].time;
         if(t < min)
         {
             min = t;
@@ -100,15 +98,12 @@ std::vector<InsTime> getData(std::string fileName, int n)
     if(is.is_open())
     {
         std::cout << " analysing start ... ";
-        int curN = 0;
-        int maxN = n;
-        while(is.good() && curN <= maxN)
+        while(is.good())
         {
             std::string str;
             std::getline(is, str);
             std::vector<std::string> sp = split(str, ' ');
-            if(sp.size() != 7) continue;
-
+            if(sp.size() != 2) continue;
             data.push_back(InsTime(std::stoi(sp[0]), std::stod(sp[1])));
         }
     }
@@ -122,10 +117,10 @@ std::vector<int> findInsertionBest()
 {
     std::vector<int> res{1200, 610, 730, 730, 580};
 
-    auto dataMerge = getData("../sortsdata/analyse_n/merge", res[MERGE]);
-    auto dataMedian = getData("../sortsdata/analyse_n/median", res[MEDIAN_QUICK]);
-    auto dataQuick = getData("../sortsdata/analyse_n/quick", res[QUICK]);
-    auto dataSmart = getData("../sortsdata/analyse_n/smart", res[SMART_QUICK]);
+    std::vector<InsTime> dataMerge = getData("../sortsdata/analyse_n/merge", res[MERGE]);
+    std::vector<InsTime> dataMedian = getData("../sortsdata/analyse_n/median", res[MEDIAN_QUICK]);
+    std::vector<InsTime> dataQuick = getData("../sortsdata/analyse_n/quick", res[QUICK]);
+    std::vector<InsTime> dataSmart = getData("../sortsdata/analyse_n/smart", res[SMART_QUICK]);
 
     analyseInsertion(dataMerge, res[MERGE]);
     analyseInsertion(dataMedian, res[MEDIAN_QUICK]);

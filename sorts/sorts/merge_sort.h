@@ -104,10 +104,9 @@ void merge(T *arr, int p, int mid, int r)
 template<typename T>
 void merge_insertion(T *arr, int p, int r)
 {
-    if(r-p <= 0)
+    if(r-p <= 1200)
     {
-        if(r-p <= 1200)
-            binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        binarySearchBlockedCopyInsertion<T>(arr, p, r);
         return;
     }
 
@@ -120,10 +119,9 @@ void merge_insertion(T *arr, int p, int r)
 template<typename T>
 void merge_insertion_galloped(T *arr, int p, int r)
 {
-	if(r-p <= 0) 
+    if(r-p <= 1200)
 	{
-//        if(r-p <= 1200)
-//            binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        binarySearchBlockedCopyInsertion<T>(arr, p, r);
 		return;
 	}
 
@@ -136,10 +134,9 @@ void merge_insertion_galloped(T *arr, int p, int r)
 template<typename T>
 void merge_insertion_N_var(T *arr, int p, int r, int N = 0)
 {
-    if(r-p <= 0)
+    if(r-p <= N)
     {
-        if(r-p <= N)
-            binarySearchBlockedCopyInsertion<T>(arr, p, r);
+        binarySearchBlockedCopyInsertion<T>(arr, p, r);
         return;
     }
 
