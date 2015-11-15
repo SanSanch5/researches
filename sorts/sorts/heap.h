@@ -88,14 +88,14 @@ private:
 	
 	void minHeapify(int i)
 	{
-		if(i < 0 || i >= m_heapsize) return;
+        if(i >= m_heapsize/2) return;
 		
         int l = LEFT(i);
         int r = RIGHT(i);
         int smallest = i;
 		if(m_heap[smallest] > m_heap[l])
 			smallest = l;
-		if(m_heap[smallest] > m_heap[r])
+        if(r < m_heapsize && m_heap[smallest] > m_heap[r])
 			smallest = r;
 		if(smallest != i)
 		{

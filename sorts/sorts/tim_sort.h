@@ -211,7 +211,7 @@ void heapMergeArrs(T *arr, std::vector<MinArr> &minArrs)
         MinArr &cur = minArrs[min.arrayFrom];
         if(cur.current < cur.n)
         {
-            heap.updateKey(0, ElementAndWhereItFrom<T>(merged[cur.current], min.arrayFrom));
+            heap.updateKey(0, ElementAndWhereItFrom<T>(merged[cur.start+cur.current], min.arrayFrom));
             heap.heapify(0);
             ++cur.current;
         }
@@ -222,6 +222,7 @@ void heapMergeArrs(T *arr, std::vector<MinArr> &minArrs)
     }
 
     delete[] merged;
+    delete[] tmp;
 }
 
     // my modification
