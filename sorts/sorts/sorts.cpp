@@ -251,6 +251,9 @@ int main(int argc, char **argv)
 
         time = getTimeOfSort(arr, n, timSortGalloped<int>, iterations);
         times.append(" " + to_string(time));
+
+        time = getTimeOfSort(arr, n, timSortWithHeap<int>, iterations);
+        times.append(" " + to_string(time));
         outFile << times << endl;
         delete[] arr;
 	}
