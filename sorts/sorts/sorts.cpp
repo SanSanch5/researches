@@ -74,6 +74,9 @@ void testSortings()
 
     sorted = testSort(timSortGalloped<T>, arr, n);
     cout << "\t\t...Galloped Timsort " << (sorted ? "OK" : "FAILED") << endl;
+
+    sorted = testSort(timSortWithHeap<T>, arr, n);
+    cout << "\t\t...Heap merging Timsort " << (sorted ? "OK" : "FAILED") << endl;
     cout << endl;
 }
 
@@ -182,7 +185,7 @@ int main(int argc, char **argv)
         else if(0 == strcmp(argv[5], "smart"))
         {
             ofstream outFileSmart (string(argv[2]) + "smart");
-            getDataN(outFileSmart, arr, N, 50, smartPartitionQuickSortVarN<int>, 580, iterations);
+            getDataN(outFileSmart, arr, N, 1, smartPartitionQuickSortVarN<int>, 580, iterations);
         }
         return 0;
     }
@@ -206,12 +209,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-	int *arr = new int[N];
 	int base = atoi(argv[4]);
-    fillArray(arr, N, base);
-	if(0 == strcmp(argv[5], "sorted"))
-		heapSort(arr, 0, N-1);	
-	
 	double time; 
 	
 	int iterations = atoi(argv[2]);
@@ -219,13 +217,16 @@ int main(int argc, char **argv)
 	ofstream outFile(argv[6]);	
 	for(int n = 100; n < N; n += offset)
 	{
-		string times(to_string(n));
-		cout << "Get time of sorting " << n << " elements array" << endl;	
-//        time = getTimeOfSort(arr, n, binarySearchBlockedCopyInsertion<int>, iterations);
-//		times.append(" " + to_string(time));
+        int *arr = new int[n];
+        fillArray(arr, n, base);
+        if(0 == strcmp(argv[5], "sorted"))
+            heapSort(arr, 0, n-1);
 
-        time = getTimeOfSort(arr, n, merge_insertion_galloped<int>, iterations);
-        times.append(" " + to_string(time));
+        string times(to_string(n));
+		cout << "Get time of sorting " << n << " elements array" << endl;	
+
+//        time = getTimeOfSort(arr, n, merge_insertion_galloped<int>, iterations);
+//        times.append(" " + to_string(time));
 
         time = getTimeOfSort(arr, n, merge_insertion<int>, iterations);
 		times.append(" " + to_string(time));
@@ -245,16 +246,16 @@ int main(int argc, char **argv)
         time = getTimeOfSort(arr, n, qsort_wrapper<int>, iterations);
         times.append(" " + to_string(time));
 
-        time = getTimeOfSort(arr, n, timSort<int>, iterations);
-        times.append(" " + to_string(time));
+//        time = getTimeOfSort(arr, n, timSort<int>, iterations);
+//        times.append(" " + to_string(time));
 
         time = getTimeOfSort(arr, n, timSortGalloped<int>, iterations);
         times.append(" " + to_string(time));
         outFile << times << endl;
+        delete[] arr;
 	}
 	cout << "Data for using in graphic can be found at " << argv[6] << endl;
 
 	outFile.close();
-	delete[] arr;
 	return 0;
 }

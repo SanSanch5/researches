@@ -5,13 +5,15 @@
 #include <vector>
 #include "insertion_sorts.h"
 #include "merge_sort.h"
+#include "heap.h"
 
 struct MinArr
 {
     int start;
     int n;
+    int current;
 
-    MinArr(int _s, int _n) : start(_s), n(_n) {}
+    MinArr(int _s, int _n) : current(0), start(_s), n(_n) {}
     ~MinArr() {}
 };
 
@@ -161,6 +163,86 @@ void stackStepGalloped(T *arr, std::stack<MinArr> &st)
         st.push(x), st.push(y), st.push(z);
 }
 
+template<typename T>
+struct ElementAndWhereItFrom
+{
+    T elem;
+    int arrayFrom;
+
+    ElementAndWhereItFrom() {}
+    ElementAndWhereItFrom(const T &_elem, int _arrayFrom) : elem(_elem), arrayFrom(_arrayFrom) {}
+
+    ElementAndWhereItFrom &operator =(const ElementAndWhereItFrom &_e)
+    {
+        elem = _e.elem;
+        arrayFrom = _e.arrayFrom;
+        return *this;
+    }
+
+    bool operator <(const ElementAndWhereItFrom &_el) const
+    {
+        return elem < _el.elem;
+    }
+
+    bool operator >(const ElementAndWhereItFrom &_el) const
+    {
+        return elem > _el.elem;
+    }
+};
+
+    // my modification
+template<typename T>
+void heapMergeArrs(T *arr, std::vector<MinArr> &minArrs)
+{
+    int n = minArrs[minArrs.size()-1].start + minArrs[minArrs.size()-1].n;
+    T *merged = new T[n];
+    std::memcpy(merged, arr, sizeof(T) * n);
+
+    ElementAndWhereItFrom<T> *tmp = new ElementAndWhereItFrom<T>[minArrs.size()];
+    Heap<ElementAndWhereItFrom<T>> heap(tmp, 0, Heap<ElementAndWhereItFrom<T>>::MIN);
+    for(int i = 0; i < minArrs.size(); ++i)
+        heap.insert(ElementAndWhereItFrom<T>(merged[minArrs[i].start], i)), ++minArrs[i].current;
+
+    int k(0);
+    while(heap.size() != 0)
+    {
+        ElementAndWhereItFrom<T> min = heap.top();
+        arr[k] = min.elem;
+        MinArr &cur = minArrs[min.arrayFrom];
+        if(cur.current < cur.n)
+        {
+            heap.updateKey(0, ElementAndWhereItFrom<T>(merged[cur.current], min.arrayFrom));
+            heap.heapify(0);
+            ++cur.current;
+        }
+        else
+            heap.pop();
+
+        ++k;
+    }
+
+    delete[] merged;
+}
+
+    // my modification
+template<typename T>
+void timSortWithHeap(T *arr, int p, int r)
+{
+    int n = r-p+1;
+    int mr = getMinRun(n);
+    if(n < mr)
+    {
+        binarySearchBlockedCopyInsertion(arr, p, r);
+        return;
+    }
+
+    auto arrs = getMinArrs(arr+p, n, mr);
+
+    for(MinArr &subArr : arrs)
+        binarySearchBlockedCopyInsertion(arr, subArr.start, subArr.start + subArr.n-1);
+
+    heapMergeArrs(arr, arrs);
+}
 
 template<typename T>
 void gallopedMergeArrs(T *arr, std::vector<MinArr> &minArrs)

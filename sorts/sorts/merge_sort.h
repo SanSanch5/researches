@@ -104,7 +104,7 @@ void merge(T *arr, int p, int mid, int r)
 template<typename T>
 void merge_insertion(T *arr, int p, int r)
 {
-    if(r-p <= 1200)
+    if(r-p <= 32)
     {
         binarySearchBlockedCopyInsertion<T>(arr, p, r);
         return;

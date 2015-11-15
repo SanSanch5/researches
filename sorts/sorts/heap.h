@@ -10,14 +10,24 @@
 template<typename T>
 class Heap
 {
-	enum Type {MAX, MIN};
 public:
-	Heap() {}
+    enum Type {MAX, MIN};
+
+    Heap() {}
 	Heap(T *arr, int n, Type _type = MAX)
 		: m_heap(arr), m_heapsize(n), m_type(_type)
 	{
 		buildHeap();		
 	}
+
+    T top() const { return m_heap[0]; }
+
+    void pop()
+    {
+        --m_heapsize;
+        m_heap[0] = m_heap[m_heapsize];
+        heapify(0);
+    }
 
 	void heapify(int i)
 	{
@@ -25,6 +35,23 @@ public:
 			maxHeapify(i);
 		else minHeapify(i);
 	}
+
+    void updateKey(int i, const T &_new)
+    {
+        auto cmp = m_type == MAX
+                ? [](const T &parent, const T &child) -> bool { return parent < child; }
+                : [](const T &parent, const T &child) -> bool { return parent > child; };
+        m_heap[i] = _new;
+        while(i != 0 && cmp(m_heap[PARENT(i)], m_heap[i]))
+            std::swap(m_heap[i], m_heap[PARENT(i)]);
+    }
+
+    void insert(const T &_new)
+    {
+        m_heap[m_heapsize] = _new;
+        updateKey(m_heapsize, _new);
+        ++m_heapsize;
+    }
 
 	void sort()
 	{
@@ -45,9 +72,9 @@ private:
 	{
 		if(i >= m_heapsize/2) return;
 		
-		T l = LEFT(i);
-		T r = RIGHT(i);
-		T largest = i;
+        int l = LEFT(i);
+        int r = RIGHT(i);
+        int largest = i;
 		if(m_heap[largest] < m_heap[l])
 			largest = l;
 		if(r < m_heapsize && m_heap[largest] < m_heap[r])
@@ -63,9 +90,9 @@ private:
 	{
 		if(i < 0 || i >= m_heapsize) return;
 		
-		T l = LEFT(i);
-		T r = RIGHT(i);
-		T smallest = i;
+        int l = LEFT(i);
+        int r = RIGHT(i);
+        int smallest = i;
 		if(m_heap[smallest] > m_heap[l])
 			smallest = l;
 		if(m_heap[smallest] > m_heap[r])

@@ -40,3 +40,10 @@ smart quick <= much_equals
 
 5. Результаты аномальные.. почему-то даже экввалентные N ухудшают результаты. Хотя теоретически это должно только улучшить, надо думать...
 6. Сравню-ка яо встроенным в Qt qSort()-ом
+7. Была ошибка: при вставках на нижних уровнях продолжалась сортировка упорядоченного массива с дополнительным пробегом по каждому снова вставками.. в общем - ужас.
+Но, результаты, в итоге, найдены и справедливы:
+The best N insertion better than merge = 32
+The best N insertion better than heap = 610
+The best N insertion better than random quick = 19
+The best N insertion better than median quick = 18
+The best N insertion better than smart quick = 138

@@ -58,7 +58,7 @@ void quickSortVarN(T *arr, int p, int r, int N = 0)
 template<typename T>
 void quickSort(T *arr, int p, int r)
 {
-    if(r-p <= 730)
+    if(r-p <= 19)
     {
         binarySearchBlockedCopyInsertion<T>(arr, p, r);
         return;
@@ -144,7 +144,7 @@ void smartPartitionQuickSortVarN(T *arr, int p, int r, int N = 0)
 template<typename T>
 void smartPartitionQuickSort(T *arr, int p, int r)
 {
-    if(r-p <= 580)
+    if(r-p <= 138)
     {
         binarySearchBlockedCopyInsertion<T>(arr, p, r);
         return;
@@ -191,7 +191,7 @@ void middleRandQuickSortVarN(T *arr, int p, int r, int N = 0)
 template<typename T>
 void middleRandQuickSort(T *arr, int p, int r)
 {
-    if(r-p <= 730)
+    if(r-p <= 18)
     {
         binarySearchBlockedCopyInsertion<T>(arr, p, r);
         return;
