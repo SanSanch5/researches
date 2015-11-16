@@ -77,6 +77,9 @@ void testSortings()
 
     sorted = testSort(timSortWithHeap<T>, arr, n);
     cout << "\t\t...Heap merging Timsort " << (sorted ? "OK" : "FAILED") << endl;
+
+    sorted = testSort(mergeHeapSort<T>, arr, n);
+    cout << "\t\t...Heap merging sort " << (sorted ? "OK" : "FAILED") << endl;
     cout << endl;
 }
 
@@ -87,6 +90,7 @@ void printAnalyseResults(vector<int> vec, string start)
     cout << start << " N insertion better than random quick = " << vec[QUICK] << endl;
     cout << start << " N insertion better than median quick = " << vec[MEDIAN_QUICK] << endl;
     cout << start << " N insertion better than smart quick = " << vec[SMART_QUICK] << endl;
+    cout << start << " N insertion better than merge heap = " << vec[MERGE_HEAP] << endl;
 }
 
 double getTimeOfSort(int *arr, int n, Sort sort, int iterations)
@@ -187,6 +191,11 @@ int main(int argc, char **argv)
             ofstream outFileSmart (string(argv[2]) + "smart");
             getDataN(outFileSmart, arr, N, 1, smartPartitionQuickSortVarN<int>, 580, iterations);
         }
+        else if(0 == strcmp(argv[5], "merge_heap"))
+        {
+            ofstream outFileSmart (string(argv[2]) + argv[5]);
+            getDataN(outFileSmart, arr, N, 1, mergeHeapSortVarN<int>, 700, iterations);
+        }
         return 0;
     }
 
@@ -253,6 +262,9 @@ int main(int argc, char **argv)
         times.append(" " + to_string(time));
 
         time = getTimeOfSort(arr, n, timSortWithHeap<int>, iterations);
+        times.append(" " + to_string(time));
+
+        time = getTimeOfSort(arr, n, mergeHeapSort<int>, iterations);
         times.append(" " + to_string(time));
         outFile << times << endl;
         delete[] arr;

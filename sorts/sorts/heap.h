@@ -43,7 +43,7 @@ public:
                 : [](const T &parent, const T &child) -> bool { return parent > child; };
         m_heap[i] = _new;
         while(i != 0 && cmp(m_heap[PARENT(i)], m_heap[i]))
-            std::swap(m_heap[i], m_heap[PARENT(i)]);
+            std::swap(m_heap[i], m_heap[PARENT(i)]), i = PARENT(i);
     }
 
     void insert(const T &_new)

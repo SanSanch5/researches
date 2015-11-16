@@ -9,7 +9,7 @@
 
 enum SortType 
 { 
-	MERGE=0, HEAP, QUICK, MEDIAN_QUICK, SMART_QUICK 
+    MERGE=0, HEAP, QUICK, MEDIAN_QUICK, SMART_QUICK, MERGE_HEAP
 }; 
 
 std::vector<std::string> split(const std::string &s, char delim);

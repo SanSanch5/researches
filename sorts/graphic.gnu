@@ -29,4 +29,5 @@ plot infilename using 1:($2*1000) title "Сортировка слиянием (
      infilename using 1:($6*1000) title "Быстрая сортировка с особой обработкой элементов, равных базе (вставки при количестве элементов <= 138) E(T_n)={/Symbol Q}(lg(n^n))" with linespoint ls 4 lc rgb "dark-red",\
      infilename using 1:($7*1000) title "Сортировка, встроенная в библиотеку QtAlgorithms" with linespoint ls 8 lc rgb "dark-green",\
      infilename using 1:($8*1000) title "Timsort с режимом галопа" with linespoint ls 10 lc rgb "dark-blue",\
-     infilename using 1:($9*1000) title "Timsort с со слиянием k массивов на куче" with linespoint ls 9 lc rgb "green"
+     infilename using 1:($9*1000) title "Timsort с со слиянием k массивов на куче" with linespoint ls 9 lc rgb "green",\
+     infilename using 1:($10*1000) title "Слияние на куче исходно отсортированных массивов" with linespoint ls 5 lc rgb "brown"

@@ -46,7 +46,7 @@ std::vector<MinArr> getMinArrs(T *arr, int n, int mr)
     while(k < n)
     {
         MinArr ma(k-1, 0);
-        auto direction = [=](T a, T b) -> bool { return a <= b; };
+        auto direction = [](T a, T b) -> bool { return a <= b; };
         bool curDirection = direction(arr[k-1], arr[k]);
         while(k < n && ++k && curDirection == direction(arr[k-1], arr[k]));
         if(!curDirection)
@@ -59,6 +59,8 @@ std::vector<MinArr> getMinArrs(T *arr, int n, int mr)
         res.push_back(ma);
         k = ma.start + ma.n + 1;
     }
+    if(k == n)
+        res.push_back(MinArr(k-1, 1));
 
     return res;
 }
@@ -239,6 +241,67 @@ void timSortWithHeap(T *arr, int p, int r)
 
     auto arrs = getMinArrs(arr+p, n, mr);
 
+    for(MinArr &subArr : arrs)
+        binarySearchBlockedCopyInsertion(arr, subArr.start, subArr.start + subArr.n-1);
+
+    heapMergeArrs(arr, arrs);
+}
+
+template<typename T>
+std::vector<MinArr> simpleMinArrs(T *arr, int n)
+{
+    std::vector<MinArr> res;
+
+    int k {1};
+    while(k < n)
+    {
+        MinArr ma(k-1, 0);
+        auto direction = [](T a, T b) -> bool { return a <= b; };
+        bool curDirection = direction(arr[k-1], arr[k]);
+        while(k < n && ++k && curDirection == direction(arr[k-1], arr[k]));
+        ma.n = k - ma.start;
+        if(!curDirection)
+            revert(arr + ma.start, ma.n);
+
+        ma.n = k < n ? ma.n : n - ma.start;
+        res.push_back(ma);
+        k = ma.start + ma.n + 1;
+    }
+    if(k == n)
+        res.push_back(MinArr(k-1, 1));
+
+    return res;
+}
+
+    // my sort
+template<typename T>
+void mergeHeapSort(T *arr, int p, int r)
+{
+    if(r-p+1 <= 94)
+    {
+        binarySearchBlockedCopyInsertion(arr, p, r);
+        return;
+    }
+
+    int n = r-p+1;
+    auto arrs = getMinArrs(arr+p, n, 94);
+    for(MinArr &subArr : arrs)
+        binarySearchBlockedCopyInsertion(arr, subArr.start, subArr.start + subArr.n-1);
+
+    heapMergeArrs(arr, arrs);
+}
+
+template<typename T>
+void mergeHeapSortVarN(T *arr, int p, int r, int N = 0)
+{
+    if(r-p+1 <= N)
+    {
+        binarySearchBlockedCopyInsertion(arr, p, r);
+        return;
+    }
+
+    int n = r-p+1;
+    auto arrs = getMinArrs(arr+p, n, N);
     for(MinArr &subArr : arrs)
         binarySearchBlockedCopyInsertion(arr, subArr.start, subArr.start + subArr.n-1);
 

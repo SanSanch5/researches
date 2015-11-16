@@ -115,17 +115,19 @@ std::vector<InsTime> getData(std::string fileName, int n)
 
 std::vector<int> findInsertionBest()
 {
-    std::vector<int> res{1200, 610, 730, 730, 580};
+    std::vector<int> res{1200, 610, 730, 730, 580, 400};
 
-    std::vector<InsTime> dataMerge = getData("../sortsdata/analyse_n/merge", res[MERGE]);
-    std::vector<InsTime> dataMedian = getData("../sortsdata/analyse_n/median", res[MEDIAN_QUICK]);
-    std::vector<InsTime> dataQuick = getData("../sortsdata/analyse_n/quick", res[QUICK]);
-    std::vector<InsTime> dataSmart = getData("../sortsdata/analyse_n/smart", res[SMART_QUICK]);
+    std::vector<InsTime> dataMerge = getData("../sortsdata_general_n_equal/analyse_n/merge", res[MERGE]);
+    std::vector<InsTime> dataMedian = getData("../sortsdata_general_n_equal/analyse_n/median", res[MEDIAN_QUICK]);
+    std::vector<InsTime> dataQuick = getData("../sortsdata_general_n_equal/analyse_n/quick", res[QUICK]);
+    std::vector<InsTime> dataSmart = getData("../sortsdata_general_n_equal/analyse_n/smart", res[SMART_QUICK]);
+    std::vector<InsTime> dataMergeHeap = getData("../sortsdata_general_n_equal/analyse_n/merge_heap", res[MERGE_HEAP]);
 
     analyseInsertion(dataMerge, res[MERGE]);
     analyseInsertion(dataMedian, res[MEDIAN_QUICK]);
     analyseInsertion(dataQuick, res[QUICK]);
     analyseInsertion(dataSmart, res[SMART_QUICK]);
+    analyseInsertion(dataMergeHeap, res[MERGE_HEAP]);
 
     return res;
 }

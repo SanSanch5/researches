@@ -47,3 +47,6 @@ The best N insertion better than heap = 610
 The best N insertion better than random quick = 19
 The best N insertion better than median quick = 18
 The best N insertion better than smart quick = 138
+The best N insertion better than merge heap = 94
+
+8. вроде барахлит в тимсорте (а точней в моей мёрж+хип) поиск подмассивов.. посмотреть
