@@ -18,14 +18,15 @@ using namespace::std;
 typedef void (*Sort)(int *arr, int p, int r); 
 typedef void (*SortVarN)(int *arr, int p, int r, int N);
 
-bool testSort(Sort f, int *arr, int n)
+bool testSort(Sort f, int *arr, int n, bool reverse = false)
 {
+    auto cmpFunc = [=](int a, int b) -> bool { return reverse ? a > b : a < b; };
 	int *tmp = new int[n];
 	copy(arr, arr+n, tmp);
 	bool sorted = true;
 	f(tmp, 0, n-1);
 	for(int i = 1; (i < n); ++i)
-		if(tmp[i] < tmp[i-1]) 
+        if(cmpFunc(tmp[i], tmp[i-1]))
 			sorted = false;
     for(int i = 0; i < 10; ++i)
 		cout << tmp[i] << " ";
@@ -55,7 +56,10 @@ void testSortings()
     cout << "\t\t...Merge sort galloped mode" << (sorted ? "OK" : "FAILED") << endl;
 
     sorted = testSort(heapSort<T>, arr, n);
-	cout << "\t\t...Heap sort " << (sorted ? "OK" : "FAILED") << endl;	
+    cout << "\t\t...Heap sort " << (sorted ? "OK" : "FAILED") << endl;
+
+    sorted = testSort(reverseHeapSort<T>, arr, n, true);
+    cout << "\t\t...Heap sort reverse" << (sorted ? "OK" : "FAILED") << endl;
 
 	sorted = testSort(quickSort<T>, arr, n);
 	cout << "\t\t...Quick sort " << (sorted ? "OK" : "FAILED") << endl;	
@@ -206,7 +210,7 @@ int main(int argc, char **argv)
     {
         cout << "\nUsage:" << endl;
         cout << "0. --test - run tests" << endl;
-        cout << "1. <max_array_size> <iterations> <step> <base> <sorted/unsorted> <destfile>" << endl;
+        cout << "1. <max_array_size> <iterations> <step> <base> <sorted/unsorted/partitionally/reverse> <destfile>" << endl;
         cout << "\twhen <step> shows array resizing stepfrom 0 to <max_array_size>, " \
                 "<base> is a sparsity percent of random generated elements; base = 0 - max sparsity" << endl;
         cout << "2. ar - analise results\n\t-e - find N when each sort equals to insertion sort" << endl;
@@ -230,6 +234,17 @@ int main(int argc, char **argv)
         fillArray(arr, n, base);
         if(0 == strcmp(argv[5], "sorted"))
             heapSort(arr, 0, n-1);
+        else if(0 == strcmp(argv[5], "partitionally"))
+        {
+//            int part = n / 10;
+//            for(int partStart = 0; partStart + part < n; partStart += part)
+//                heapSort(arr, partStart, partStart+part);
+            heapSort(arr, 0, n-1);
+            for(int sw = 0; sw < 4; ++sw)
+                swap(arr[rand()%n], arr[rand()%n]);
+        }
+        else if(0 == strcmp(argv[5], "reverse"))
+            reverseHeapSort(arr, 0, n-1);
 
         string times(to_string(n));
 		cout << "Get time of sorting " << n << " elements array" << endl;	
@@ -264,8 +279,8 @@ int main(int argc, char **argv)
         time = getTimeOfSort(arr, n, timSortWithHeap<int>, iterations);
         times.append(" " + to_string(time));
 
-        time = getTimeOfSort(arr, n, mergeHeapSort<int>, iterations);
-        times.append(" " + to_string(time));
+//        time = getTimeOfSort(arr, n, mergeHeapSort<int>, iterations);
+//        times.append(" " + to_string(time));
         outFile << times << endl;
         delete[] arr;
 	}

@@ -159,7 +159,7 @@ void stackStepGalloped(T *arr, std::stack<MinArr> &st)
             x.n += y.n;
             st.push(x), st.push(z);
         }
-        stackStep(arr, st);
+        stackStepGalloped(arr, st);
     }
     else
         st.push(x), st.push(y), st.push(z);
