@@ -99,15 +99,18 @@ void printAnalyseResults(vector<int> vec, string start)
 
 double getTimeOfSort(int *arr, int n, Sort sort, int iterations)
 {
-    clock_t cl = clock();
     int *tmp = new int[n];
+    double res = 0;
     for(int i = 0; i < iterations; ++i)
     {
         copy(arr, arr+n, tmp);
+        clock_t cl = clock();
         sort(tmp, 0, n-1);
+        res += (double)(clock() - cl);
     }
+    res /= CLOCKS_PER_SEC * iterations;
     delete[] tmp;
-    return (double)(clock() - cl) / CLOCKS_PER_SEC / iterations;
+    return res;
 }
 
 void fillArray(int *arr, int N, int percent)
@@ -204,13 +207,14 @@ int main(int argc, char **argv)
     }
 
 	int N = 1000000;
-    if(argc == 7)
+    if(argc == 7 || argc == 8)
 		N = atoi(argv[1]);
     else
     {
         cout << "\nUsage:" << endl;
         cout << "0. --test - run tests" << endl;
-        cout << "1. <max_array_size> <iterations> <step> <base> <sorted/unsorted/partitionally/reverse> <destfile>" << endl;
+        cout << "1. <max_array_size> <iterations> <step> <base> <sorted/unsorted/partitionally/reverse> <destfile>" \
+                 " [<partition percent>]" << endl;
         cout << "\twhen <step> shows array resizing stepfrom 0 to <max_array_size>, " \
                 "<base> is a sparsity percent of random generated elements; base = 0 - max sparsity" << endl;
         cout << "2. ar - analise results\n\t-e - find N when each sort equals to insertion sort" << endl;
@@ -239,8 +243,9 @@ int main(int argc, char **argv)
 //            int part = n / 10;
 //            for(int partStart = 0; partStart + part < n; partStart += part)
 //                heapSort(arr, partStart, partStart+part);
+            int partitionPercent = atoi(argv[7]);
             heapSort(arr, 0, n-1);
-            for(int sw = 0; sw < 4; ++sw)
+            for(int sw = 0; sw < n*partitionPercent/200; ++sw)
                 swap(arr[rand()%n], arr[rand()%n]);
         }
         else if(0 == strcmp(argv[5], "reverse"))
@@ -254,30 +259,38 @@ int main(int argc, char **argv)
 
         time = getTimeOfSort(arr, n, merge_insertion<int>, iterations);
 		times.append(" " + to_string(time));
+//        cout << "Merge have got " << time << endl;
 		 
         time = getTimeOfSort(arr, n, heapSort<int>, iterations);
 		times.append(" " + to_string(time));
-		 
+//        cout << "Heap have got " << time << endl;
+
         time = getTimeOfSort(arr, n, quickSort<int>, iterations);
 		times.append(" " + to_string(time));
-	 
+//        cout << "Quick have got " << time << endl;
+
         time = getTimeOfSort(arr, n, middleRandQuickSort<int>, iterations);
 		times.append(" " + to_string(time));
-	 
+//        cout << "Medial quick have got " << time << endl;
+
         time = getTimeOfSort(arr, n, smartPartitionQuickSort<int>, iterations);
 		times.append(" " + to_string(time));
+//        cout << "Smart partition quick have got " << time << endl;
 
         time = getTimeOfSort(arr, n, qsort_wrapper<int>, iterations);
         times.append(" " + to_string(time));
+//        cout << "Included qsort have got " << time << endl;
 
 //        time = getTimeOfSort(arr, n, timSort<int>, iterations);
 //        times.append(" " + to_string(time));
 
         time = getTimeOfSort(arr, n, timSortGalloped<int>, iterations);
         times.append(" " + to_string(time));
+//        cout << "Timsort have got " << time << endl;
 
         time = getTimeOfSort(arr, n, timSortWithHeap<int>, iterations);
         times.append(" " + to_string(time));
+//        cout << "Timsort with heap merging have got " << time << endl;
 
 //        time = getTimeOfSort(arr, n, mergeHeapSort<int>, iterations);
 //        times.append(" " + to_string(time));

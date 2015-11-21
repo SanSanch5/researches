@@ -1,8 +1,6 @@
 #ifndef TIM_SORT_H
 #define TIM_SORT_H
 
-#include <stack>
-#include <vector>
 #include "insertion_sorts.h"
 #include "merge_sort.h"
 #include "heap.h"
@@ -13,8 +11,32 @@ struct MinArr
     int n;
     int current;
 
+    MinArr() {}
     MinArr(int _s, int _n) : current(0), start(_s), n(_n) {}
     ~MinArr() {}
+};
+
+struct MinArrays
+{
+    int n;
+    MinArr *arrs;
+
+    void push(MinArr arr)
+    {
+        arrs[n] = arr;
+        ++n;
+    }
+
+    MinArr pop()
+    {
+        --n;
+        return arrs[n];
+    }
+
+    MinArr & operator [](int i)
+    {
+        return arrs[i];
+    }
 };
 
 int getMinRun(int N)
@@ -38,9 +60,11 @@ void revert(T *arr, int n)
 }
 
 template<typename T>
-std::vector<MinArr> getMinArrs(T *arr, int n, int mr)
+MinArrays getMinArrs(T *arr, int n, int mr)
 {
-    std::vector<MinArr> res;
+    MinArrays res;
+    res.n = 0;
+    res.arrs = new MinArr[n/mr + 1];
 
     int k {1};
     while(k < n)
@@ -56,23 +80,23 @@ std::vector<MinArr> getMinArrs(T *arr, int n, int mr)
         ma.n = ma.n < mr
                 ? (k + mr < n ? ma.n + mr : n - ma.start)
                 : ma.n;
-        res.push_back(ma);
+        res.push(ma);
         k = ma.start + ma.n + 1;
     }
     if(k == n)
-        res.push_back(MinArr(k-1, 1));
+        res.push(MinArr(k-1, 1));
 
     return res;
 }
 
 template<typename T>
-void stackStep(T *arr, std::stack<MinArr> &st)
+void stackStep(T *arr, MinArrays &st)
 {
-    if(st.size() == 1 || st.size() == 2) return;
+    if(st.n <= 2) return;
 
-    MinArr z = st.top(); st.pop();
-    MinArr y = st.top(); st.pop();
-    MinArr x = st.top(); st.pop();
+    MinArr z = st.pop();
+    MinArr y = st.pop();
+    MinArr x = st.pop();
 
     if(!(x.n > y.n + z.n && y.n > z.n))
     {
@@ -96,24 +120,28 @@ void stackStep(T *arr, std::stack<MinArr> &st)
 
 
 template<typename T>
-void mergeArrs(T *arr, std::vector<MinArr> &minArrs)
+void mergeArrs(T *arr, MinArrays &minArrs)
 {
-    std::stack<MinArr> st;
+    MinArrays st;
+    st.n = 0;
+    st.arrs = new MinArr[minArrs.n];
 
-    for(auto &a : minArrs)
+    for(int i = 0; i < minArrs.n; ++i)
     {
-        st.push(a);
+        st.push(minArrs[i]);
         stackStep(arr, st);
     }
 
-    while(st.size() != 1)
+    while(st.n != 1)
     {
-        MinArr y = st.top(); st.pop();
-        MinArr x = st.top(); st.pop();
+        MinArr y = st.pop();
+        MinArr x = st.pop();
         merge(arr, x.start, x.start + x.n - 1, y.start + y.n - 1);
         x.n += y.n;
         st.push(x);
     }
+
+    delete[] st.arrs;
 }
 
 template<typename T>
@@ -129,40 +157,12 @@ void timSort(T *arr, int p, int r)
 
     auto arrs = getMinArrs(arr+p, n, mr);
 
-    for(MinArr &subArr : arrs)
-        binarySearchBlockedCopyInsertion(arr, subArr.start, subArr.start + subArr.n-1);
+    for(int i = 0; i < arrs.n; ++i)
+        binarySearchBlockedCopyInsertion(arr, arrs[i].start, arrs[i].start + arrs[i].n-1);
 
     mergeArrs(arr, arrs);
-}
 
-
-template<typename T>
-void stackStepGalloped(T *arr, std::stack<MinArr> &st)
-{
-    if(st.size() == 1 || st.size() == 2) return;
-
-    MinArr z = st.top(); st.pop();
-    MinArr y = st.top(); st.pop();
-    MinArr x = st.top(); st.pop();
-
-    if(!(x.n > y.n + z.n && y.n > z.n))
-    {
-        if(z.n < x.n)
-        {
-            gallopedMerge(arr, y.start, y.start + y.n - 1, z.start + z.n-1);
-            y.n += z.n;
-            st.push(x), st.push(y);
-        }
-        else
-        {
-            gallopedMerge(arr, x.start, x.start + x.n - 1, y.start + y.n-1);
-            x.n += y.n;
-            st.push(x), st.push(z);
-        }
-        stackStepGalloped(arr, st);
-    }
-    else
-        st.push(x), st.push(y), st.push(z);
+    delete[] arrs.arrs;
 }
 
 template<typename T>
@@ -194,15 +194,15 @@ struct ElementAndWhereItFrom
 
     // my modification
 template<typename T>
-void heapMergeArrs(T *arr, std::vector<MinArr> &minArrs)
+void heapMergeArrs(T *arr, MinArrays &minArrs)
 {
-    int n = minArrs[minArrs.size()-1].start + minArrs[minArrs.size()-1].n;
+    int n = minArrs[minArrs.n - 1].start + minArrs[minArrs.n - 1].n;
     T *merged = new T[n];
     std::memcpy(merged, arr, sizeof(T) * n);
 
-    ElementAndWhereItFrom<T> *tmp = new ElementAndWhereItFrom<T>[minArrs.size()];
+    ElementAndWhereItFrom<T> *tmp = new ElementAndWhereItFrom<T>[minArrs.n];
     Heap<ElementAndWhereItFrom<T>> heap(tmp, 0, Heap<ElementAndWhereItFrom<T>>::MIN);
-    for(int i = 0; i < minArrs.size(); ++i)
+    for(int i = 0; i < minArrs.n; ++i)
         heap.insert(ElementAndWhereItFrom<T>(merged[minArrs[i].start], i)), ++minArrs[i].current;
 
     int k(0);
@@ -241,39 +241,13 @@ void timSortWithHeap(T *arr, int p, int r)
 
     auto arrs = getMinArrs(arr+p, n, mr);
 
-    for(MinArr &subArr : arrs)
-        binarySearchBlockedCopyInsertion(arr, subArr.start, subArr.start + subArr.n-1);
+    for(int i = 0; i < arrs.n; ++i)
+        binarySearchBlockedCopyInsertion(arr, arrs[i].start, arrs[i].start + arrs[i].n-1);
 
     heapMergeArrs(arr, arrs);
 }
 
-template<typename T>
-std::vector<MinArr> simpleMinArrs(T *arr, int n)
-{
-    std::vector<MinArr> res;
-
-    int k {1};
-    while(k < n)
-    {
-        MinArr ma(k-1, 0);
-        auto direction = [](T a, T b) -> bool { return a <= b; };
-        bool curDirection = direction(arr[k-1], arr[k]);
-        while(k < n && ++k && curDirection == direction(arr[k-1], arr[k]));
-        ma.n = k - ma.start;
-        if(!curDirection)
-            revert(arr + ma.start, ma.n);
-
-        ma.n = k < n ? ma.n : n - ma.start;
-        res.push_back(ma);
-        k = ma.start + ma.n + 1;
-    }
-    if(k == n)
-        res.push_back(MinArr(k-1, 1));
-
-    return res;
-}
-
-    // my sort
+ // my sort
 template<typename T>
 void mergeHeapSort(T *arr, int p, int r)
 {
@@ -285,10 +259,12 @@ void mergeHeapSort(T *arr, int p, int r)
 
     int n = r-p+1;
     auto arrs = getMinArrs(arr+p, n, 94);
-    for(MinArr &subArr : arrs)
-        binarySearchBlockedCopyInsertion(arr, subArr.start, subArr.start + subArr.n-1);
+    for(int i = 0; i < arrs.n; ++i)
+        binarySearchBlockedCopyInsertion(arr, arrs[i].start, arrs[i].start + arrs[i].n-1);
 
     heapMergeArrs(arr, arrs);
+
+    delete[] arrs.arrs;
 }
 
 template<typename T>
@@ -302,31 +278,66 @@ void mergeHeapSortVarN(T *arr, int p, int r, int N = 0)
 
     int n = r-p+1;
     auto arrs = getMinArrs(arr+p, n, N);
-    for(MinArr &subArr : arrs)
-        binarySearchBlockedCopyInsertion(arr, subArr.start, subArr.start + subArr.n-1);
+    for(int i = 0; i < arrs.n; ++i)
+        binarySearchBlockedCopyInsertion(arr, arrs[i].start, arrs[i].start + arrs[i].n-1);
 
     heapMergeArrs(arr, arrs);
+
+    delete[] arrs.arrs;
 }
 
 template<typename T>
-void gallopedMergeArrs(T *arr, std::vector<MinArr> &minArrs)
+void stackStepGalloped(T *arr, MinArrays &st)
 {
-    std::stack<MinArr> st;
+    if(st.n <= 2) return;
 
-    for(auto &a : minArrs)
+    MinArr z = st.pop();
+    MinArr y = st.pop();
+    MinArr x = st.pop();
+
+    if(!(x.n > y.n + z.n && y.n > z.n))
     {
-        st.push(a);
+        if(z.n < x.n)
+        {
+            gallopedMerge(arr, y.start, y.start + y.n - 1, z.start + z.n-1);
+            y.n += z.n;
+            st.push(x), st.push(y);
+        }
+        else
+        {
+            gallopedMerge(arr, x.start, x.start + x.n - 1, y.start + y.n-1);
+            x.n += y.n;
+            st.push(x), st.push(z);
+        }
+        stackStepGalloped(arr, st);
+    }
+    else
+        st.push(x), st.push(y), st.push(z);
+}
+
+template<typename T>
+void gallopedMergeArrs(T *arr, MinArrays &minArrs)
+{
+    MinArrays st;
+    st.n = 0;
+    st.arrs = new MinArr[minArrs.n];
+
+    for(int i = 0; i < minArrs.n; ++i)
+    {
+        st.push(minArrs[i]);
         stackStepGalloped(arr, st);
     }
 
-    while(st.size() != 1)
+    while(st.n != 1)
     {
-        MinArr y = st.top(); st.pop();
-        MinArr x = st.top(); st.pop();
+        MinArr y = st.pop();
+        MinArr x = st.pop();
         gallopedMerge(arr, x.start, x.start + x.n - 1, y.start + y.n - 1);
         x.n += y.n;
         st.push(x);
     }
+
+    delete[] st.arrs;
 }
 
 template<typename T>
@@ -342,10 +353,12 @@ void timSortGalloped(T *arr, int p, int r)
 
     auto arrs = getMinArrs(arr+p, n, mr);
 
-    for(MinArr &subArr : arrs)
-        binarySearchBlockedCopyInsertion(arr, subArr.start, subArr.start + subArr.n-1);
+    for(int i = 0; i < arrs.n; ++i)
+        binarySearchBlockedCopyInsertion(arr, arrs[i].start, arrs[i].start + arrs[i].n-1);
 
     gallopedMergeArrs(arr, arrs);
+
+    delete[] arrs.arrs;
 }
 
 #endif // TIM_SORT_H
