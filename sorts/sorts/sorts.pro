@@ -29,4 +29,5 @@ HEADERS += \
     quick_sorts.h \
     resultsanalyser.h \
     qsort_wrapper.h \
-    tim_sort.h
+    tim_sort.h \
+    tim_sort_not_mine.h

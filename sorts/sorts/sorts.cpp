@@ -12,6 +12,7 @@
 #include "resultsanalyser.h"
 #include "qsort_wrapper.h"
 #include "tim_sort.h"
+#include "tim_sort_not_mine.h"
 
 using namespace::std;
 
@@ -84,6 +85,9 @@ void testSortings()
 
     sorted = testSort(mergeHeapSort<T>, arr, n);
     cout << "\t\t...Heap merging sort " << (sorted ? "OK" : "FAILED") << endl;
+
+    sorted = testSort(timSortWrapper, arr, n);
+    cout << "\t\t...Wrapped tim sort " << (sorted ? "OK" : "FAILED") << endl;
     cout << endl;
 }
 
@@ -291,6 +295,9 @@ int main(int argc, char **argv)
         time = getTimeOfSort(arr, n, timSortWithHeap<int>, iterations);
         times.append(" " + to_string(time));
 //        cout << "Timsort with heap merging have got " << time << endl;
+
+        time = getTimeOfSort(arr, n, timSortWrapper, iterations);
+        times.append(" " + to_string(time));
 
 //        time = getTimeOfSort(arr, n, mergeHeapSort<int>, iterations);
 //        times.append(" " + to_string(time));
