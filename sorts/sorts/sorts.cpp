@@ -261,46 +261,46 @@ int main(int argc, char **argv)
 //        time = getTimeOfSort(arr, n, merge_insertion_galloped<int>, iterations);
 //        times.append(" " + to_string(time));
 
-        time = getTimeOfSort(arr, n, merge_insertion<int>, iterations);
-		times.append(" " + to_string(time));
-//        cout << "Merge have got " << time << endl;
+//        time = getTimeOfSort(arr, n, merge_insertion<int>, iterations);
+//		times.append(" " + to_string(time));
+////        cout << "Merge have got " << time << endl;
 		 
-        time = getTimeOfSort(arr, n, heapSort<int>, iterations);
-		times.append(" " + to_string(time));
-//        cout << "Heap have got " << time << endl;
+//        time = getTimeOfSort(arr, n, heapSort<int>, iterations);
+//		times.append(" " + to_string(time));
+////        cout << "Heap have got " << time << endl;
 
         time = getTimeOfSort(arr, n, quickSort<int>, iterations);
-		times.append(" " + to_string(time));
+        times.append(" " + to_string(time));
 //        cout << "Quick have got " << time << endl;
 
-        time = getTimeOfSort(arr, n, middleRandQuickSort<int>, iterations);
-		times.append(" " + to_string(time));
-//        cout << "Medial quick have got " << time << endl;
+//        time = getTimeOfSort(arr, n, middleRandQuickSort<int>, iterations);
+//		times.append(" " + to_string(time));
+////        cout << "Medial quick have got " << time << endl;
 
-        time = getTimeOfSort(arr, n, smartPartitionQuickSort<int>, iterations);
-		times.append(" " + to_string(time));
-//        cout << "Smart partition quick have got " << time << endl;
+//        time = getTimeOfSort(arr, n, smartPartitionQuickSort<int>, iterations);
+//		times.append(" " + to_string(time));
+////        cout << "Smart partition quick have got " << time << endl;
 
-        time = getTimeOfSort(arr, n, qsort_wrapper<int>, iterations);
-        times.append(" " + to_string(time));
-//        cout << "Included qsort have got " << time << endl;
-
-//        time = getTimeOfSort(arr, n, timSort<int>, iterations);
+//        time = getTimeOfSort(arr, n, qsort_wrapper<int>, iterations);
 //        times.append(" " + to_string(time));
+////        cout << "Included qsort have got " << time << endl;
 
-        time = getTimeOfSort(arr, n, timSortGalloped<int>, iterations);
-        times.append(" " + to_string(time));
-//        cout << "Timsort have got " << time << endl;
+////        time = getTimeOfSort(arr, n, timSort<int>, iterations);
+////        times.append(" " + to_string(time));
 
-        time = getTimeOfSort(arr, n, timSortWithHeap<int>, iterations);
-        times.append(" " + to_string(time));
-//        cout << "Timsort with heap merging have got " << time << endl;
+//        time = getTimeOfSort(arr, n, timSortGalloped<int>, iterations);
+//        times.append(" " + to_string(time));
+////        cout << "Timsort have got " << time << endl;
+
+//        time = getTimeOfSort(arr, n, timSortWithHeap<int>, iterations);
+//        times.append(" " + to_string(time));
+////        cout << "Timsort with heap merging have got " << time << endl;
 
         time = getTimeOfSort(arr, n, timSortWrapper, iterations);
         times.append(" " + to_string(time));
 
-//        time = getTimeOfSort(arr, n, mergeHeapSort<int>, iterations);
-//        times.append(" " + to_string(time));
+        time = getTimeOfSort(arr, n, mergeHeapSort<int>, iterations);
+        times.append(" " + to_string(time));
         outFile << times << endl;
         delete[] arr;
 	}
